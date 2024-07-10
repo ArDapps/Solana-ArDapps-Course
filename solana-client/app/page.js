@@ -1,30 +1,58 @@
 import {
-  clusterApiUrl,
   Connection,
-  LAMPORTS_PER_SOL,
+  Transaction,
+  SystemProgram,
+  sendAndConfirmTransaction,
   PublicKey,
 } from "@solana/web3.js";
+import { getKeypairFromEnvironment } from "@solana-developers/helpers";
+
 import React from "react";
 
 const Home = () => {
-  const userAddress = "dv4ACNkpYPcE3aKmYDqZm9G5EB3J4MRoeE7WNDRBVJB";
-  const connection = new Connection(clusterApiUrl("devnet"));
-  //const connection = new Connection(clusterApiUrl("mainnet-beta"));
+  const suppliedToPubkey = process.argv[2] || null;
 
-  console.log(connection);
+  if (!suppliedToPubkey) {
+    console.log(`Please provide a public key to send to`);
+    process.exit(1);
+  }
 
-  const getBalance = async () => {
-    const address = new PublicKey(userAddress);
+  const senderKeypair = getKeypairFromEnvironment("SECRET_KEY");
 
-    const balance = await connection.getBalance(address);
+  console.log(`suppliedToPubkey: ${suppliedToPubkey}`);
 
-    const convertINSOl = balance / LAMPORTS_PER_SOL;
+  const toPubkey = new PublicKey(suppliedToPubkey);
 
-    console.log("=========>LAM===>", balance);
-    console.log("=========>SOL===>", convertINSOl);
-  };
+  const connection = new Connection(
+    "https://api.devnet.solana.com",
+    "confirmed"
+  );
 
-  getBalance();
+  console.log(
+    `✅ Loaded our own keypair, the destination public key, and connected to Solana`
+  );
+
+  const transaction = new Transaction();
+
+const LAMPORTS_TO_SEND = 5000;
+
+const sendSolInstruction = SystemProgram.transfer({
+  fromPubkey: senderKeypair.publicKey,
+  toPubkey,
+  lamports: LAMPORTS_TO_SEND,
+});
+
+transaction.add(sendSolInstruction);
+
+const signature = await sendAndConfirmTransaction(connection, transaction, [
+  senderKeypair,
+]);
+
+console.log(
+  `💸 Finished! Sent ${LAMPORTS_TO_SEND} to the address ${toPubkey}. `
+);
+console.log(`Transaction signature is ${signature}!`);
+
 
   return <div>Home Page</div>;
 };
