@@ -1,48 +1,32 @@
-import "dotenv/config";
-import { getKeypairFromEnvironment } from "@solana-developers/helpers";
+import {
+  clusterApiUrl,
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+} from "@solana/web3.js";
+import React from "react";
 
-export default function Home() {
-  // const [publicKey, setPublickKey] = useState("");
-  // const [privateKey, setPrivateKey] = useState("");
+const Home = () => {
+  const userAddress = "dv4ACNkpYPcE3aKmYDqZm9G5EB3J4MRoeE7WNDRBVJB";
+  const connection = new Connection(clusterApiUrl("devnet"));
+  //const connection = new Connection(clusterApiUrl("mainnet-beta"));
 
-  // const generateWallet = () => {
-  //   const keypair = Keypair.generate();
+  console.log(connection);
 
-  //   setPublickKey(keypair.publicKey.toBase58());
-  //   setPrivateKey(keypair.secretKey);
+  const getBalance = async () => {
+    const address = new PublicKey(userAddress);
 
-  //   console.log(`The public key is: `, keypair.publicKey);
-  //   console.log(`The secret key is: `, keypair.secretKey);
-  // };
+    const balance = await connection.getBalance(address);
 
-  console.log(process.env.NEXT_PUBLIC_MY_PRIVATE_KEY);
+    const convertINSOl = balance / LAMPORTS_PER_SOL;
 
-  const getMyAccountFromPrivateKey = async () => {
-    const keypair = await getKeypairFromEnvironment(
-      process.env.NEXT_PUBLIC_MY_PRIVATE_KEY
-    );
-    console.log(keypair);
+    console.log("=========>LAM===>", balance);
+    console.log("=========>SOL===>", convertINSOl);
   };
 
-  getMyAccountFromPrivateKey();
-  return (
-    <main>
-      <p className="bg-red-600 text-white text-3xl p-4 m-4">
-        Welcome To Solana Course
-      </p>
-      {/* <p className="p-3 m-3  text-2xl">Wallet Publick Key: {publicKey}</p> */}
-      {/* <button
-        className="bg-black p-3 m-3 text-white rounded"
-        onClick={generateWallet}
-      >
-        Generate Wallet
-      </button> */}
-      {/* <button
-        className="bg-red-600 p-3 m-3 text-white rounded"
-        onClick={getMyAccountFromPrivateKey}
-      >
-        MY Wallet
-      </button> */}
-    </main>
-  );
-}
+  getBalance();
+
+  return <div>Home Page</div>;
+};
+
+export default Home;
