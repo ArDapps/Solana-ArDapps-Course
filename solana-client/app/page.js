@@ -1,4 +1,3 @@
-import SolanaTransactionGuide from "@/components/SolanaTransactionGuide";
 import React from "react";
 
 const Home = () => {
