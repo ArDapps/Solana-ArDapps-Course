@@ -25,7 +25,6 @@ const CreateToken = () => {
   const { publicKey, sendTransaction, connected } = useWallet();
   const [tokenName, setTokenName] = useState("");
   const [symbol, setSymbol] = useState("");
-  const [metadata, setMetadata] = useState("");
   const [amount, setAmount] = useState("");
   const [decimals, setDecimals] = useState("");
 
@@ -71,9 +70,18 @@ const CreateToken = () => {
           form.amount * Math.pow(10, form.decimals)
         )
       );
+
       await sendTransaction(createNewTokenTransaction, connection, {
         signers: [mintKeypair],
       });
+
+      // Save the token metadata (name and symbol) off-chain, e.g., in your database or another storage solution
+      console.log(
+        "Token created with name:",
+        form.tokenName,
+        "and symbol:",
+        form.symbol
+      );
     },
     [publicKey, connection, sendTransaction]
   );
@@ -103,12 +111,6 @@ const CreateToken = () => {
             onChange={(e) => setSymbol(e.target.value)}
           />
           <input
-            type="text"
-            className="form-control block mb-4 w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-            placeholder="Metadata Url"
-            onChange={(e) => setMetadata(e.target.value)}
-          />
-          <input
             type="number"
             className="form-control block mb-4 w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
             placeholder="Amount"
@@ -127,9 +129,8 @@ const CreateToken = () => {
               onClick({
                 decimals: Number(decimals),
                 amount: Number(amount),
-                metadata: metadata,
-                symbol: symbol,
                 tokenName: tokenName,
+                symbol: symbol,
               })
             }
           >
