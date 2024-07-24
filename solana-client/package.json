@@ -9,8 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@metaplex-foundation/mpl-token-metadata": "^3.2.1",
+    "@metaplex-foundation/umi": "^0.9.2",
     "@solana-developers/helpers": "^2.3.0",
-    "@solana/web3.js": "^1.95.0",
+    "@solana/spl-token": "^0.4.8",
+    "@solana/web3.js": "^1.95.1",
+    "dotenv": "^16.4.5",
     "esrun": "^3.2.26",
     "next": "14.2.4",
     "react": "^18",
